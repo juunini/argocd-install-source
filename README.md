@@ -29,20 +29,33 @@ USERNAME: admin
 PASSWORD: ${PASSWORD}"
 ```
 
+## Install argocd cli
+
+https://argo-cd.readthedocs.io/en/stable/cli_installation/
+
 ## Install ingress-nginx on argocd
 
-| Name | Value |
-| - | - |
-| Repository | `https://github.com/kubernetes/ingress-nginx.git` |
-| Branch | `controller-v1.5.1` |
-| Path | `deploy/static/provider/cloud` |
+```sh
+argocd app create ingress-nginx \
+  --repo https://github.com/kubernetes/ingress-nginx.git \
+  --revision controller-v1.5.1 \
+  --path deploy/static/provider/cloud \
+  --dest-namespace ingress-nginx \
+  --dest-server https://kubernetes.default.svc \
+  --sync-option CreateNamespace=true \
+  --sync-policy automated
+```
 
 ## Install cert-manager on argocd
 
-| Name | Value |
-| - | - |
-| Helm | `https://charts.jetstack.io` |
-| Chart | `cert-manager` |
-| Version | `v1.11.0` |
-
-`installCRDs`: `true`
+```sh
+argocd app create cert-manager \
+  --repo https://charts.jetstack.io \
+  --helm-chart cert-manager \
+  --revision v1.11.0 \
+  --helm-set installCRDs=true \
+  --dest-namespace cert-manager \
+  --dest-server https://kubernetes.default.svc \
+  --sync-option CreateNamespace=true \
+  --sync-policy automated
+```
