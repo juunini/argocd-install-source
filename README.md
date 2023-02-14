@@ -4,8 +4,26 @@
 
 ```sh
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+echo "apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+
+components:
+  - https://github.com/argoproj-labs/argocd-extensions/manifests
+" > kustomization.yaml
+
+kubectl kustomize . | kubectl apply -f - -n argocd
+rm kustomization.yaml
+
 kubectl rollout status deployment -n argocd
+
+PASSWORD=kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+echo -e "
+USERNAME: admin
+PASSWORD: ${PASSWORD}"
 ```
 
 ## Install ingress-nginx on argocd
