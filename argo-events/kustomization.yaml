@@ -1,0 +1,3 @@
+resources:
+  - install.yaml
+  - install-validating-webhook.yaml
