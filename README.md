@@ -20,6 +20,9 @@ rm kustomization.yaml
 
 kubectl rollout status deployment -n argocd
 
+kubectl apply -n argocd \
+    -f https://raw.githubusercontent.com/argoproj-labs/rollout-extension/v0.2.1/manifests/install.yaml
+
 PASSWORD=kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 echo -e "
 USERNAME: admin
